@@ -1,0 +1,16 @@
+# Created by .ignore support plugin (hsz.mobi)
+### Python template
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+.idea/
+
+environ/
+
+# Django stuff:
+*.log
+local_settings.py
+
+
