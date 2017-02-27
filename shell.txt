@@ -1,0 +1,5 @@
+from geocoder.serializers import GeocoderSerializer
+from geocoder.helpers import Calle
+s = GeocoderSerializer()
+s.interseccion(Calle('callao'), Calle('corrientes'))
+j = s.interseccion(Calle('callao'), Calle('corrientes'))

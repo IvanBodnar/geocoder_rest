@@ -5,7 +5,7 @@ from .exceptions import CalleNoExiste, InterseccionNoExiste
 
 def get_calles():
     """
-    Returns list of street names
+    Retorna una lista con los nombres de todas las calles de CABA
     :return: list
     """
     query = CallesGeocod.objects.order_by('nombre').distinct('nombre')
@@ -16,7 +16,7 @@ class Calle:
 
     def __init__(self, nombre):
         """
-        Takes a street name and checks its existence
+        Toma el nombre de una calle y chequea su existencia
         :param nombre: str
         """
         query = "select existe_calle(%s)"
@@ -26,7 +26,6 @@ class Calle:
              raise CalleNoExiste('La calle {} no existe'.format(nombre))
 
         self.nombre = nombre.lower()
-
 
     def _ejecutar_query(self, query, *args):
         """

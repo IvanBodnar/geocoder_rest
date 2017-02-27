@@ -3,8 +3,33 @@ from django.db import connection
 from geocoder.helpers import Calle, get_calles
 from geocoder.models import CallesGeocod
 from geocoder.exceptions import CalleNoExiste, InterseccionNoExiste
+from geocoder.serializers import GeocoderSerializer
 from .database_definitions import *
 
+
+def preparar_datos():
+    """
+   Incorpora a la base de datos que se crea para el testing
+   las funciones del geocodificador y dos tramos de
+   calles para prueba.
+   Las definiciones vienen de database_definitions.py.
+   Se usa cursor.execute() porque CallesGeocod.objects.raw()
+   no funciona.
+   """
+    with connection.cursor() as cursor:
+        # Incorporar las funciones
+        cursor.execute(union_geom)
+        cursor.execute(existe_calle)
+        cursor.execute(altura_total_calle)
+        cursor.execute(existe_altura)
+        cursor.execute(punto_interseccion)
+        cursor.execute(altura_direccion_calle)
+
+    # Incorporar dos tramos que se intersectan
+    CallesGeocod.objects.create(**cabildo_2000)
+    CallesGeocod.objects.create(**cabildo_2100)
+    CallesGeocod.objects.create(**juramento_2350)
+    CallesGeocod.objects.create(**juramento_2400)
 
 class GeocoderTestCase(TestCase):
     """
@@ -12,28 +37,7 @@ class GeocoderTestCase(TestCase):
     de datos que conforman el geocodificador
     """
     def setUp(self):
-        """
-        Incorpora a la base de datos que se crea para el testing
-        las funciones del geocodificador y dos tramos de
-        calles para prueba.
-        Las definiciones vienen de database_definitions.py.
-        Se usa cursor.execute() porque CallesGeocod.objects.raw()
-        no funciona.
-        """
-        with connection.cursor() as cursor:
-            # Incorporar las funciones
-            cursor.execute(union_geom)
-            cursor.execute(existe_calle)
-            cursor.execute(altura_total_calle)
-            cursor.execute(existe_altura)
-            cursor.execute(punto_interseccion)
-            cursor.execute(altura_direccion_calle)
-
-        # Incorporar dos tramos que se intersectan
-        CallesGeocod.objects.create(**cabildo_2000)
-        CallesGeocod.objects.create(**cabildo_2100)
-        CallesGeocod.objects.create(**juramento_2350)
-        CallesGeocod.objects.create(**juramento_2400)
+        preparar_datos()
 
     def test_crea_calle(self):
         """
@@ -96,3 +100,15 @@ class GeocoderTestCase(TestCase):
         self.assertEqual(['cabildo', 'juramento'], calles)
 
 
+class GeocoderSerializerTestCase(TestCase):
+
+    def setUp(self):
+        preparar_datos()
+
+    def test_interseccion(self):
+        gs = GeocoderSerializer()
+        calle1 = Calle('cabildo')
+        calle2 = Calle('juramento')
+        self.assertEqual('{"nombre_calles": "cabildo y juramento", '
+                         '"interseccion": "POINT(-58.4566933131458 -34.5620356414316)"}',
+                         gs.interseccion(calle1, calle2))
