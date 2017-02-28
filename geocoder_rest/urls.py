@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from geocoder.views import InterseccionView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^$', InterseccionView.as_view(), name='geocoder_interseccion')
 ]
