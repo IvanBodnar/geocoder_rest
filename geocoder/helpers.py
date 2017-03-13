@@ -5,11 +5,32 @@ from .exceptions import CalleNoExiste, InterseccionNoExiste
 
 def get_calles():
     """
-    Retorna una lista con los nombres de todas las calles de CABA
+    Retorna una lista con los nombres de todas las calles de CABA.
     :return: list
     """
     query = CallesGeocod.objects.order_by('nombre').distinct('nombre')
     return [calle.nombre for calle in query if calle.nombre is not None]
+
+
+def interseccion(c1, c2):
+    """
+    Retorna un diccionario con el nombre de la interseccion y el wkt en wgs_1984
+    del punto donde las dos calles se intersectan.
+    :param c1: str, nombre de la primera calle.
+    :param c2: str, nombre de la segunda calle.
+    :return: dict
+    """
+    try:
+        calle1 = Calle(c1)
+        calle2 = Calle(c2)
+        diccionario = {'nombre_calles': '{} y {}'.format(calle1.nombre, calle2.nombre),
+                       'interseccion': calle1 + calle2}
+    except CalleNoExiste:
+        return {'error': 'la calle no existe'}
+    except InterseccionNoExiste:
+        return {'error': 'la interseccion no existe'}
+
+    return diccionario
 
 
 class Calle:
@@ -29,12 +50,12 @@ class Calle:
 
     def _ejecutar_query(self, query, *args):
         """
-        Executes the passed query
-        :param query: query string properly formatted
-        with %s as parameter placeholders:
+        Ejecuta la query que se pasa como argumento
+        :param query: string que representa la query apropiadamente formateada
+        con %s como placeholders de los parametros:
         'select function(%s [...%s])'
-        :param args: arguments to be passed to the query
-        :return : query result. None if no result was retrieved.
+        :param args: argumentos a pasarle a la query
+        :return : resultado de la query. Retorna None si no arroja resultado
         """
         with connection.cursor() as cursor:
             cursor.execute(query, args)
@@ -43,23 +64,23 @@ class Calle:
 
     def ubicar_altura(self, altura):
         """
-        Returns a string representation of the geometry
-        in wgs84 crs of the point that marks
-        the house number passed.
-        :param altura int: house number
-        :return str: string representation of geometry
+        Retorna un string que representa la geometria en wkt
+        en crs wgs84 del punto que marca
+        el numero de casa pasado como parametro.
+        :param altura int: numero de casa
+        :return str: representacion en string de la geometria en wkt
         """
         query = "select st_astext(altura_direccion_calle(%s, %s))"
         return self._ejecutar_query(query, self.nombre, altura)
 
     def __add__(self, other):
         """
-        Overloads + operator to allow the return of the geometry
-        of an intersection by adding two Calle instances:
-        street1 + street2
-        :param other: the other Calle instance
-        :return str: string representation of the point marking
-        the intersection in wgs84 crs.
+        Sobrecarga el operador + para permitir el retorno de la representacion
+        en wkt de la geometria de una interseccion al sumar dos instancias de Calle:
+        calle1 + calle2
+        :param other: la otra instancia de Calle
+        :return str: representacion en wkt del punto que marca
+        la interseccion en crs wgs84
         """
         query = "select st_astext(punto_interseccion(%s, %s))"
         resultado = self._ejecutar_query(query, self.nombre, other.nombre)

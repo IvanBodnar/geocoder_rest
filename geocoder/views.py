@@ -1,7 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import interseccion
+from .helpers import interseccion
+from .helpers import get_calles
 
 
 class InterseccionView(APIView):
@@ -17,5 +18,13 @@ class InterseccionView(APIView):
             response = Response(inter, status=status.HTTP_400_BAD_REQUEST)
         else:
             response = Response(inter, status=status.HTTP_200_OK)
+
+        return response
+
+
+class NombresCallesView(APIView):
+
+    def get(self, request):
+        response = Response(get_calles(), status=status.HTTP_200_OK)
 
         return response

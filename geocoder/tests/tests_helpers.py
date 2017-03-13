@@ -1,9 +1,8 @@
 from django.test import TestCase
 from django.db import connection
-from geocoder.helpers import Calle, get_calles
+from geocoder.helpers import Calle, get_calles, interseccion
 from geocoder.models import CallesGeocod
 from geocoder.exceptions import CalleNoExiste, InterseccionNoExiste
-from geocoder.serializers import interseccion
 from .database_definitions import *
 
 
@@ -31,7 +30,8 @@ def preparar_datos():
     CallesGeocod.objects.create(**juramento_2350)
     CallesGeocod.objects.create(**juramento_2400)
 
-class GeocoderTestCase(TestCase):
+
+class GeocoderCalleTestCase(TestCase):
     """
     Testea la clase Calle, que maneja las funciones de la base
     de datos que conforman el geocodificador
@@ -90,6 +90,12 @@ class GeocoderTestCase(TestCase):
             calle1 + calle2
         self.assertTrue('No se Encontró la Intersección', context.exception)
 
+
+class GeocoderFuncionesHelpersTestCase(TestCase):
+
+    def setUp(self):
+        preparar_datos()
+
     def test_get_calles(self):
         """
         Testea que la funcion get_calles() devuelva una lista
@@ -98,12 +104,6 @@ class GeocoderTestCase(TestCase):
         """
         calles = get_calles()
         self.assertEqual(['cabildo', 'juramento'], calles)
-
-
-class GeocoderSerializerTestCase(TestCase):
-
-    def setUp(self):
-        preparar_datos()
 
     def test_interseccion(self):
         calle1 = 'cabildo'
