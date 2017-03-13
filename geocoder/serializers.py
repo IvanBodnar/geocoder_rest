@@ -13,5 +13,7 @@ def interseccion(c1, c2):
         return {'error': 'la calle no existe'}
     except InterseccionNoExiste:
         return {'error': 'la interseccion no existe'}
+    except TypeError:
+        return {'error': 'Debe proveer interseccion'}
 
     return diccionario

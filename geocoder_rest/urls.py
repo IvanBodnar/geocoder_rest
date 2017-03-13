@@ -19,5 +19,5 @@ from geocoder.views import InterseccionView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', InterseccionView.as_view(), name='geocoder_interseccion')
+    url(r'^interseccion/$', InterseccionView.as_view(), name='geocoder_interseccion')
 ]

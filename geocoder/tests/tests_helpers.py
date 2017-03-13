@@ -3,7 +3,7 @@ from django.db import connection
 from geocoder.helpers import Calle, get_calles
 from geocoder.models import CallesGeocod
 from geocoder.exceptions import CalleNoExiste, InterseccionNoExiste
-from geocoder.serializers import GeocoderSerializer
+from geocoder.serializers import interseccion
 from .database_definitions import *
 
 
@@ -106,9 +106,8 @@ class GeocoderSerializerTestCase(TestCase):
         preparar_datos()
 
     def test_interseccion(self):
-        gs = GeocoderSerializer()
-        calle1 = Calle('cabildo')
-        calle2 = Calle('juramento')
-        self.assertEqual('{"nombre_calles": "cabildo y juramento", '
-                         '"interseccion": "POINT(-58.4566933131458 -34.5620356414316)"}',
-                         gs.interseccion(calle1, calle2))
+        calle1 = 'cabildo'
+        calle2 = 'juramento'
+        self.assertEqual({"nombre_calles": "cabildo y juramento",
+                         "interseccion": "POINT(-58.4566933131458 -34.5620356414316)"},
+                         interseccion(calle1, calle2))
