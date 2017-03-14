@@ -1,8 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .helpers import interseccion
-from .helpers import get_calles
+from .helpers import interseccion, get_calles
 
 
 class InterseccionView(APIView):
