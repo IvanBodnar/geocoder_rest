@@ -48,7 +48,8 @@ class Calle:
 
         self.nombre = nombre.lower()
 
-    def _ejecutar_query(self, query, *args):
+    @staticmethod
+    def _ejecutar_query(query, *args):
         """
         Ejecuta la query que se pasa como argumento
         :param query: string que representa la query apropiadamente formateada
