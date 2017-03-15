@@ -1,7 +1,15 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .helpers import interseccion, get_calles
+from .helpers import get_calles, interseccion, altura_calle
+
+
+class NombresCallesView(APIView):
+
+    def get(self):
+        response = Response(get_calles(), status=status.HTTP_200_OK)
+
+        return response
 
 
 class InterseccionView(APIView):
@@ -21,9 +29,18 @@ class InterseccionView(APIView):
         return response
 
 
-class NombresCallesView(APIView):
+class AlturaView(APIView):
 
     def get(self, request):
-        response = Response(get_calles(), status=status.HTTP_200_OK)
+        calle = request.GET.get('calle', None)
+        altura = request.GET.get('altura', None)
+        _altura_calle = altura_calle(calle, altura)
+        if not calle or not altura:
+            response = Response({'error': 'deben suministrarse calle y altura'},
+                                status=status.HTTP_400_BAD_REQUEST)
+        elif 'error' in _altura_calle.keys():
+            response = Response(_altura_calle, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            response = Response(_altura_calle, status=status.HTTP_200_OK)
 
         return response

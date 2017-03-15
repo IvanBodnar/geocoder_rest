@@ -76,7 +76,7 @@ class GeocoderCalleTestCase(TestCase):
         """
         with self.assertRaises(CalleNoExiste) as context:
             Calle('aaabbbb')
-        self.assertTrue('La calle aaaabbbb no existe', context.exception)
+        self.assertTrue('la calle aaaabbbb no existe', context.exception)
 
     def test_raises_interseccionnoexiste(self):
         """
@@ -88,7 +88,7 @@ class GeocoderCalleTestCase(TestCase):
             calle1 = Calle('juramento')
             calle2 = Calle('juramento')
             calle1 + calle2
-        self.assertTrue('No se Encontró la Intersección', context.exception)
+        self.assertTrue('no se encontro la interseccion', context.exception)
 
 
 class GeocoderFuncionesHelpersTestCase(TestCase):

@@ -1,6 +1,6 @@
 from django.db import connection
 from .models import CallesGeocod
-from .exceptions import CalleNoExiste, InterseccionNoExiste
+from .exceptions import CalleNoExiste, InterseccionNoExiste, AlturaNoExiste
 
 
 def get_calles():
@@ -23,12 +23,30 @@ def interseccion(c1, c2):
     try:
         calle1 = Calle(c1)
         calle2 = Calle(c2)
-        diccionario = {'nombre_calles': '{} y {}'.format(calle1.nombre, calle2.nombre),
-                       'interseccion': calle1 + calle2}
-    except CalleNoExiste:
-        return {'error': 'la calle no existe'}
-    except InterseccionNoExiste:
-        return {'error': 'la interseccion no existe'}
+        diccionario = {'interseccion': '{} y {}'.format(calle1.nombre, calle2.nombre),
+                       'coordenadas': calle1 + calle2}
+    except CalleNoExiste as e:
+        return {'error': str(e)}
+    except InterseccionNoExiste as e:
+        return {'error': str(e)}
+    except Exception as e:
+        return {'error': str(e)}
+
+    return diccionario
+
+
+def altura_calle(c, altura):
+
+    try:
+        calle = Calle(c)
+        diccionario = {'direccion': '{} {}'.format(calle.nombre, altura),
+                       'coordenadas': calle.ubicar_altura(altura)}
+    except CalleNoExiste as e:
+        return {'error': str(e)}
+    except AlturaNoExiste as e:
+        return {'error': str(e)}
+    except Exception as e:
+        return {'error': str(e)}
 
     return diccionario
 
@@ -44,7 +62,7 @@ class Calle:
         resultado = self._ejecutar_query(query, nombre)
 
         if not resultado:
-             raise CalleNoExiste('La calle {} no existe'.format(nombre))
+             raise CalleNoExiste('la calle {} no existe'.format(nombre))
 
         self.nombre = nombre.lower()
 
@@ -61,6 +79,7 @@ class Calle:
         with connection.cursor() as cursor:
             cursor.execute(query, args)
             resultado = cursor.fetchone()[0]
+
         return resultado
 
     def ubicar_altura(self, altura):
@@ -72,7 +91,12 @@ class Calle:
         :return str: representacion en string de la geometria en wkt
         """
         query = "select st_astext(altura_direccion_calle(%s, %s))"
-        return self._ejecutar_query(query, self.nombre, altura)
+        resultado = self._ejecutar_query(query, self.nombre, altura)
+
+        if not resultado:
+            raise AlturaNoExiste('la altura no existe para la calle solicitada')
+
+        return resultado
 
     def __add__(self, other):
         """
@@ -87,7 +111,7 @@ class Calle:
         resultado = self._ejecutar_query(query, self.nombre, other.nombre)
 
         if not resultado:
-            raise InterseccionNoExiste('No se Encontró la Intersección')
+            raise InterseccionNoExiste('no se encontro la interseccion')
 
         return resultado
 

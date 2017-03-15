@@ -15,10 +15,11 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from geocoder.views import InterseccionView, NombresCallesView
+from geocoder.views import InterseccionView, AlturaView, NombresCallesView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^interseccion/$', InterseccionView.as_view(), name='geocoder_interseccion'),
+    url(r'^altura_calle/$', AlturaView.as_view(), name='geocoder_altura_calle'),
     url(r'^nombres_calles/$', NombresCallesView.as_view(), name='geocoder_nombres_calles'),
 ]
