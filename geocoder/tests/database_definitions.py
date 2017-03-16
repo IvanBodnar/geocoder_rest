@@ -98,7 +98,7 @@ BEGIN
   SELECT ST_LineInterpolatePoint(ST_LineMerge((SELECT geom
   FROM calles_geocod
   WHERE rango @> altura
-  AND nombre = lower(calle))), (altura % 100)::float / 100)
+  AND nombre = lower(calle) LIMIT 1)), (altura % 100)::float / 100)
   INTO resultado;
 
   RETURN resultado;
