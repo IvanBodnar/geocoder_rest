@@ -108,6 +108,6 @@ class GeocoderFuncionesHelpersTestCase(TestCase):
     def test_interseccion(self):
         calle1 = 'cabildo'
         calle2 = 'juramento'
-        self.assertEqual({"nombre_calles": "cabildo y juramento",
-                         "interseccion": "POINT(-58.4566933131458 -34.5620356414316)"},
+        self.assertEqual({"interseccion": "cabildo y juramento",
+                         "coordenadas": "POINT(-58.4566933131458 -34.5620356414316)"},
                          interseccion(calle1, calle2))
