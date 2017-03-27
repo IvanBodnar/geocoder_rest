@@ -9,3 +9,6 @@ class InterseccionNoExiste(Exception):
 
 class AlturaNoExiste(Exception):
     pass
+
+class TramoNoExiste(Exception):
+    pass

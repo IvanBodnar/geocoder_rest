@@ -1,6 +1,6 @@
 from django.db import connection
 from .models import CallesGeocod
-from .exceptions import CalleNoExiste, InterseccionNoExiste, AlturaNoExiste
+from .exceptions import CalleNoExiste, InterseccionNoExiste, AlturaNoExiste, TramoNoExiste
 
 
 def get_calles():
@@ -57,8 +57,12 @@ def tramo(c, inicial, final):
         calle = Calle(c)
         diccionario = {'tramo': '{} entre {} y {}'.format(calle.nombre, inicial, final),
                        'coordenadas': calle.tramo(inicial, final)}
-    except:
-        return 'No'
+    except CalleNoExiste as e:
+        return {'error': str(e)}
+    except TramoNoExiste as e:
+        return {'error': str(e)}
+    except Exception as e:
+        return {'error': str(e)}
 
     return diccionario
 
