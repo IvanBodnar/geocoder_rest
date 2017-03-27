@@ -16,8 +16,8 @@ def interseccion(c1, c2):
     """
     Retorna un diccionario con el nombre de la interseccion y el wkt en wgs_1984
     del punto donde las dos calles se intersectan.
-    :param c1: str, nombre de la primera calle.
-    :param c2: str, nombre de la segunda calle.
+    :param c1 str: nombre de la primera calle.
+    :param c2 str: nombre de la segunda calle.
     :return: dict
     """
     try:
@@ -36,7 +36,12 @@ def interseccion(c1, c2):
 
 
 def altura_calle(c, altura):
-
+    """
+    Retorna un diccionario con el nombre y altura de la calle especificada
+    y el wkt en wgs1984 del punto correspondiente a esa altura.
+    :param c str: calle a buscar
+    :param altura int: altura de la calle a buscar
+    """
     try:
         calle = Calle(c)
         diccionario = {'direccion': '{} {}'.format(calle.nombre, altura),
@@ -52,7 +57,13 @@ def altura_calle(c, altura):
 
 
 def tramo(c, inicial, final):
-
+    """
+    Retorna un diccionario con el nombre y altura final e inicial del tramo
+    buscado y el wkt en web mercator (3857).
+    :param c str: calle a buscar
+    :param inicial int: altura inicial del tramo
+    :param final int: altura final del tramo
+    """
     try:
         calle = Calle(c)
         diccionario = {'tramo': '{} entre {} y {}'.format(calle.nombre, inicial, final),
