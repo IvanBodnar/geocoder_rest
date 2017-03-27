@@ -51,6 +51,18 @@ def altura_calle(c, altura):
     return diccionario
 
 
+def tramo(c, inicial, final):
+
+    try:
+        calle = Calle(c)
+        diccionario = {'tramo': '{} entre {} y {}'.format(calle.nombre, inicial, final),
+                       'coordenadas': calle.tramo(inicial, final)}
+    except:
+        return 'No'
+
+    return diccionario
+
+
 class Calle:
 
     def __init__(self, nombre):
@@ -95,6 +107,12 @@ class Calle:
 
         if not resultado:
             raise AlturaNoExiste('la altura no existe para la calle solicitada')
+
+        return resultado
+
+    def tramo(self, altura_inicial, altura_final):
+        query = "select st_astext((select * from union_geom(%s, %s, %s)))"
+        resultado = self._ejecutar_query(query, self.nombre, altura_inicial, altura_final)
 
         return resultado
 

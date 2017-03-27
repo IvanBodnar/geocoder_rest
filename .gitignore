@@ -13,4 +13,4 @@ environ/
 *.log
 local_settings.py
 
-
+venv/

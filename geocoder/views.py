@@ -44,3 +44,10 @@ class AlturaView(APIView):
             response = Response(_altura_calle, status=status.HTTP_200_OK)
 
         return response
+
+
+# class TramoView(APIView):
+#
+#     def get(self, request):
+#         altura_inicial = request.GET.get('inicial', None)
+#         altura_final = request.GET.get('final', None)
