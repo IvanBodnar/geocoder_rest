@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.db import connection
-from geocoder.helpers import Calle, get_calles, interseccion
+from geocoder.helpers import Calle, get_calles, interseccion, altura_calle, tramo
 from geocoder.models import CallesGeocod
 from geocoder.exceptions import CalleNoExiste, InterseccionNoExiste
 from .database_definitions import *
@@ -18,6 +18,7 @@ def preparar_datos():
     with connection.cursor() as cursor:
         # Incorporar las funciones
         cursor.execute(union_geom)
+        cursor.execute(union_geom_v2)
         cursor.execute(existe_calle)
         cursor.execute(altura_total_calle)
         cursor.execute(existe_altura)
@@ -92,16 +93,14 @@ class GeocoderCalleTestCase(TestCase):
 
 
 class GeocoderFuncionesHelpersTestCase(TestCase):
-
+    """
+    Testea que las funciones wrapper devuelvan los
+    correspondientes diccionarios.
+    """
     def setUp(self):
         preparar_datos()
 
     def test_get_calles(self):
-        """
-        Testea que la funcion get_calles() devuelva una lista
-        en orden alfabetico con las calles que figuran en la base.
-        :return:
-        """
         calles = get_calles()
         self.assertEqual(['cabildo', 'juramento'], calles)
 
@@ -111,3 +110,23 @@ class GeocoderFuncionesHelpersTestCase(TestCase):
         self.assertEqual({"interseccion": "cabildo y juramento",
                          "coordenadas": "POINT(-58.4566933131458 -34.5620356414316)"},
                          interseccion(calle1, calle2))
+
+    def test_altura_calle(self):
+        calle = 'cabildo'
+        altura = 2115
+        diccionario = {'direccion': 'cabildo 2115',
+                       'coordenadas': 'POINT(-58.456815768952 -34.5618934492396)'}
+        self.assertEqual(diccionario, altura_calle(calle, altura))
+
+
+    def test_tramo(self):
+        calle = 'cabildo'
+        inicial = 2000
+        final = 2200
+        diccionario = {'tramo': 'cabildo entre 2000 y 2200',
+                       'coordenadas': 'MULTILINESTRING((-6507277.94176834 '
++                                     '-4104650.53997124,-6507369.33307795 '
++                                     '-4104521.67427025),(-6507369.33307795 '
++                                     '-4104521.67427025,-6507417.00404406 '
++                                     '-4104454.4573117,-6507459.89786231 -4104393.20914671))'}
+        self.assertEqual(diccionario, tramo(calle, inicial, final))

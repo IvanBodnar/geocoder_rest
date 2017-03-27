@@ -63,6 +63,27 @@ END;
 $$ LANGUAGE 'plpgsql';
 '''
 
+# union_geom version 2
+union_geom_v2 = '''
+CREATE OR REPLACE FUNCTION union_geom(calle text, altura_i integer, altura_f integer)
+  RETURNS geometry AS $$
+DECLARE resultado geometry;
+BEGIN
+
+  SELECT st_union(array_agg(c.geom))
+  FROM calles_geocod c
+  WHERE nombre = lower(calle)
+  AND
+  (alt_i != 0 AND alt_f != 1 AND alt_i < alt_f)
+  AND
+  (alt_i >= altura_i AND alt_f <= altura_f)
+  INTO resultado;
+
+  RETURN st_transform(resultado, 3857);
+END;
+$$ LANGUAGE 'plpgsql';
+'''
+
 punto_interseccion = '''
 CREATE OR REPLACE FUNCTION punto_interseccion(calle1 text, calle2 text)
   RETURNS GEOMETRY AS $$
@@ -106,7 +127,6 @@ BEGIN
 END;
 $$ LANGUAGE 'plpgsql';
 '''
-
 
 cabildo_2000 = {'id': 2207,
                 'codigo': 3005,
