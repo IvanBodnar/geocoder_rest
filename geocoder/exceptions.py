@@ -13,3 +13,7 @@ class AlturaNoExiste(Exception):
 
 class TramoNoExiste(Exception):
     pass
+
+
+class AlturaInicialAlturaFinal(Exception):
+    pass

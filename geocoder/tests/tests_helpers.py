@@ -122,11 +122,8 @@ class GeocoderFuncionesHelpersTestCase(TestCase):
     def test_tramo(self):
         calle = 'cabildo'
         inicial = 2000
-        final = 2200
-        diccionario = {'tramo': 'cabildo entre 2000 y 2200',
-                       'coordenadas': 'MULTILINESTRING((-6507277.94176834 '
-+                                     '-4104650.53997124,-6507369.33307795 '
-+                                     '-4104521.67427025),(-6507369.33307795 '
-+                                     '-4104521.67427025,-6507417.00404406 '
-+                                     '-4104454.4573117,-6507459.89786231 -4104393.20914671))'}
+        final = 2199
+        diccionario = {'tramo': 'cabildo entre 2000 y 2199',
+                       'coordenadas': 'MULTILINESTRING((-6507277.94176834 -4104650.53997124,'
+                                      '-6507369.33307795 -4104521.67427025))'}
         self.assertEqual(diccionario, tramo(calle, inicial, final))

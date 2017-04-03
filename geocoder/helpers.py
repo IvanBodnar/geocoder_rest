@@ -1,6 +1,7 @@
 from django.db import connection
+from django.db.utils import DataError
 from .models import CallesGeocod
-from .exceptions import CalleNoExiste, InterseccionNoExiste, AlturaNoExiste, TramoNoExiste
+from .exceptions import CalleNoExiste, InterseccionNoExiste, AlturaNoExiste, TramoNoExiste, AlturaInicialAlturaFinal
 
 
 def get_calles():
@@ -29,6 +30,8 @@ def interseccion(c1, c2):
         return {'error': str(e)}
     except InterseccionNoExiste as e:
         return {'error': str(e)}
+    except DataError as e:
+        return {'error': str(e)}
     except Exception as e:
         return {'error': str(e)}
 
@@ -50,6 +53,8 @@ def altura_calle(c, altura):
         return {'error': str(e)}
     except AlturaNoExiste as e:
         return {'error': str(e)}
+    except DataError as e:
+        return {'error': str(e)}
     except Exception as e:
         return {'error': str(e)}
 
@@ -70,7 +75,11 @@ def tramo(c, inicial, final):
                        'coordenadas': calle.tramo(inicial, final)}
     except CalleNoExiste as e:
         return {'error': str(e)}
+    except AlturaNoExiste as e:
+        return {'error': str(e)}
     except TramoNoExiste as e:
+        return {'error': str(e)}
+    except DataError as e:
         return {'error': str(e)}
     except Exception as e:
         return {'error': str(e)}
@@ -121,11 +130,31 @@ class Calle:
         resultado = self._ejecutar_query(query, self.nombre, altura)
 
         if not resultado:
-            raise AlturaNoExiste('la altura no existe para la calle solicitada')
+            raise AlturaNoExiste('la altura {} no existe para la calle solicitada'.format(altura))
 
         return resultado
 
     def tramo(self, altura_inicial, altura_final):
+        """
+        Retorna el tramo de la calle comprendido entre la altura
+        inicial y la altura final especificada en wkt en
+        web mercator (3857).
+        :param altura_inicial int: altura inicial del tramo 
+        :param altura_final int: altura final del tramo (inclusive) 
+        :return str: representacion en string de la geometria en wkt 
+        """
+        # Comprobar altura inicial y altura final
+        self.ubicar_altura(altura_inicial)
+        self.ubicar_altura(altura_final)
+
+        # Comprobar que altura inicial es menor que altura final
+        # y que tienen 100 mts o mas de diferencia
+        altura_inicial_int = int(altura_inicial)
+        altura_final_int = int(altura_final)
+        if (altura_inicial_int >= altura_final_int) or (altura_final_int - altura_inicial_int) < 100:
+            raise AlturaInicialAlturaFinal('la altura inicial debe ser menor que la final'
+                                           ' y tener una diferencia de 100 mts o mas')
+
         query = "select st_astext((select * from union_geom(%s, %s, %s)))"
         resultado = self._ejecutar_query(query, self.nombre, altura_inicial, altura_final)
 
