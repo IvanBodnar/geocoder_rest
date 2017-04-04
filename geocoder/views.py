@@ -6,7 +6,7 @@ from .helpers import get_calles, interseccion, altura_calle, tramo
 
 class NombresCallesView(APIView):
 
-    def get(self):
+    def get(self, request):
         response = Response(get_calles(), status=status.HTTP_200_OK)
 
         return response
