@@ -27,13 +27,13 @@ def interseccion(c1, c2):
         diccionario = {'interseccion': '{} y {}'.format(calle1.nombre, calle2.nombre),
                        'coordenadas': calle1 + calle2}
     except CalleNoExiste as e:
-        return {'error': str(e)}
+        return {'error': 'calle_no_existe', 'mensaje': str(e)}
     except InterseccionNoExiste as e:
-        return {'error': str(e)}
+        return {'error': 'interseccion_no_existe', 'mensaje': str(e)}
     except DataError as e:
-        return {'error': str(e)}
+        return {'error': 'data_error', 'mensaje': str(e)}
     except Exception as e:
-        return {'error': str(e)}
+        return {'error': 'exception', 'mensaje': str(e)}
 
     return diccionario
 
@@ -50,13 +50,13 @@ def altura_calle(c, altura):
         diccionario = {'direccion': '{} {}'.format(calle.nombre, altura),
                        'coordenadas': calle.ubicar_altura(altura)}
     except CalleNoExiste as e:
-        return {'error': str(e)}
+        return {'error': 'calle_no_existe', 'mensaje': str(e)}
     except AlturaNoExiste as e:
-        return {'error': str(e)}
+        return {'error': 'altura_no_existe', 'mensaje': str(e)}
     except DataError as e:
-        return {'error': str(e)}
+        return {'error': 'data_error', 'mensaje': str(e)}
     except Exception as e:
-        return {'error': str(e)}
+        return {'error': 'exception', 'mensaje': str(e)}
 
     return diccionario
 
