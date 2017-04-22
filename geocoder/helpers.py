@@ -74,15 +74,15 @@ def tramo(c, inicial, final):
         diccionario = {'tramo': '{} entre {} y {}'.format(calle.nombre, inicial, final),
                        'coordenadas': calle.tramo(inicial, final)}
     except CalleNoExiste as e:
-        return {'error': str(e)}
+        return {'error': 'calle_no_existe', 'mensaje': str(e)}
     except AlturaNoExiste as e:
-        return {'error': str(e)}
+        return {'error': 'altura_no_existe', 'mensaje': str(e)}
     except TramoNoExiste as e:
-        return {'error': str(e)}
+        return {'error': 'tramo_no_existe', 'mensaje': str(e)}
     except DataError as e:
-        return {'error': str(e)}
+        return {'error': 'data_error', 'mensaje': str(e)}
     except Exception as e:
-        return {'error': str(e)}
+        return {'error': 'exception', 'mensaje': str(e)}
 
     return diccionario
 
